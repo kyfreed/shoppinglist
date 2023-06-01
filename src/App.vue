@@ -53,6 +53,10 @@
   </template>
 
 <style>
+  * {
+    font-size: 18px;
+  }
+
   #list-wrapper {
     width: 50%;
     margin: auto;
