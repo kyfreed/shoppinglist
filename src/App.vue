@@ -3,6 +3,7 @@
   import { supabase } from './lib/supabaseClient'
 
   const shoppingList = ref([])
+  const newItem = ref("")
 
   const channel = supabase
   	.channel('table_db_changes')
@@ -22,16 +23,38 @@
     shoppingList.value = data
   }
 
+  async function addItem() {
+  	const { error } = await supabase.from("shoppinglist").insert({name: newItem.value})
+  	newItem.value = ""
+  }
+
+  async function deleteItem(itemId) {
+    const { error } = await supabase.from("shoppinglist").delete().eq('id', itemId)
+  }
+
   onMounted(() => {
     getShoppingList()
   })
   </script>
 
   <template>
-    <ul>
-      <li v-for="item in shoppingList" :key="item.id">{{ item.name }}</li>
-    </ul>
-
+    <div id="list-wrapper">
+      <ul>
+        <list-item 
+          v-for="item in shoppingList" 
+          :key="item.id"
+          :name="item.name"
+          @delete-item="deleteItem(item.id)"
+          />
+      </ul>
+      <input type="text" v-model="newItem">
+      <button @click="addItem">Add item</button>
+    </div>
   </template>
 
-<style></style>
+<style>
+  #list-wrapper {
+    width: 50%;
+    margin: auto;
+  }
+</style>
