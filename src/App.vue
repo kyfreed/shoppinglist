@@ -50,6 +50,7 @@
 	async function addItem() {
 		const { error } = await supabase.from("shoppinglist").insert({name: newItem.value, store_name: (storeSelection.value == "New store" ? newStore.value : storeSelection.value)})
 		newItem.value = ""
+		newStore.value = ""
 	}
 
 	async function deleteItem(itemId) {
