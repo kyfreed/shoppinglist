@@ -9,6 +9,7 @@
 	const stores = ref([])
 	const shoppingList = ref({})
 	const storeMenu = ref([])
+	const tab = ref("")
 
 	const channel = supabase
 		.channel('table_db_changes')
@@ -63,38 +64,39 @@
 	</script>
 
 	<template>
-		<div class="list-wrapper">
-			<tabs>
-				<tab v-for="store in stores" :key="store.store_name" :name="store.store_name">
-					<ul>
-						<list-item 
-						v-for="item in shoppingList[store.store_name]" 
-						:key="item.id"
-						:name="item.name"
-						@delete-item="deleteItem(item.id)"
-						/>
-					</ul>
-				</tab>
-			</tabs>
-			<input type="text" v-model="newItem">
-			<button @click="addItem">Add item</button>
-			<br>
-			<label for="stores">
-			<select id="stores" v-model="storeSelection">
-				<option v-for="store in storeMenu">{{ store }}</option>
-			</select>
-			<input type="text" v-model="newStore" v-show="storeSelection == 'New store'">
-		</label>
-		</div>
+		<v-card>
+			<v-tabs 
+			v-model="tab" 
+			bg-color="#2b337f"
+			show-arrows>
+				<v-tab v-for="store in stores" :value="store.store_name" class="text-white">{{ store.store_name }}</v-tab>
+			</v-tabs>
+
+			<v-card-text>
+				<v-window v-model="tab">
+					<v-window-item v-for="store in stores" :value="store.store_name">
+						<ul>
+							<list-item 
+							v-for="item in shoppingList[store.store_name]" 
+							:key="item.id"
+							:name="item.name"
+							@delete-item="deleteItem(item.id)"
+							/>
+						</ul>
+					</v-window-item>
+				</v-window>
+			</v-card-text>
+		</v-card>
+		<v-text-field label="Item to add" class="w-50" v-model="newItem"></v-text-field>
+		<v-btn @click="addItem">Add item</v-btn>
+		<br>
+		<br>
+		<v-select label="Store" class="w-50" v-model="storeSelection" :items="storeMenu"></v-select>
+		<v-text-field label="Store name" class="w-50" v-model="newStore" v-show="storeSelection == 'New store'"></v-text-field>
 	</template>
 
 <style>
 	* {
 		font-size: 18px;
-	}
-
-	.list-wrapper {
-		width: 50%;
-		margin: auto;
 	}
 </style>
