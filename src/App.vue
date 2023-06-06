@@ -8,7 +8,7 @@
 	const newStore = ref("")
 	const stores = ref([])
 	const shoppingList = ref({})
-	const storeMenu = ref([])
+	const storeNames = ref([])
 	const tab = ref("")
 
 	const channel = supabase
@@ -31,11 +31,11 @@
 		const { data:storeList } = await supabase.from('distinct_stores').select()
 		stores.value = storeList
 
-		storeMenu.value = ["New store"]
+		storeNames.value = []
 
 		stores.value.forEach((store) => {
 			shoppingList.value[store.store_name] = []
-			storeMenu.value.push(store.store_name)
+			storeNames.value.push(store.store_name)
 			items.value.forEach((item) => {
 				if(item.store_name == store.store_name) {
 					shoppingList.value[store.store_name].push(item)
@@ -49,7 +49,7 @@
 	}
 
 	async function addItem() {
-		const { error } = await supabase.from("shoppinglist").insert({name: newItem.value, store_name: (storeSelection.value == "New store" ? newStore.value : storeSelection.value)})
+		const { error } = await supabase.from("shoppinglist").insert({name: newItem.value, store_name: storeSelection.value})
 		newItem.value = ""
 		newStore.value = ""
 	}
@@ -87,12 +87,11 @@
 				</v-window>
 			</v-card-text>
 		</v-card>
-		<v-text-field label="Item to add" class="w-50" v-model="newItem"></v-text-field>
+		<v-text-field label="Item to add" style="width: 300px;" v-model="newItem"></v-text-field>
 		<v-btn @click="addItem">Add item</v-btn>
 		<br>
 		<br>
-		<v-select label="Store" class="w-50" v-model="storeSelection" :items="storeMenu"></v-select>
-		<v-text-field label="Store name" class="w-50" v-model="newStore" v-show="storeSelection == 'New store'"></v-text-field>
+		<v-combobox label="Store" style="width: 300px;" v-model="storeSelection" :items="storeNames"></v-combobox>
 	</template>
 
 <style>
