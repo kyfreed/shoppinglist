@@ -76,8 +76,9 @@
 			<v-tabs 
 			v-model="tab" 
 			bg-color="#2b337f"
-			show-arrows>
-				<v-tab v-for="store in stores" :value="store.store_name" class="text-white">{{ store.store_name }}</v-tab>
+			show-arrows
+			grow>
+				<v-tab v-for="store in stores" :value="store.store_name" class="text-white" @click="storeSelection = store.store_name">{{ store.store_name }}</v-tab>
 			</v-tabs>
 
 			<v-card-text>
