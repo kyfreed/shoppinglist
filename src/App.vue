@@ -10,6 +10,14 @@
 	const shoppingList = ref({})
 	const storeNames = ref([])
 	const tab = ref("")
+	const form = ref(null)
+	const rules = ref([
+		value => {
+			if(value) return true
+
+			return "You must enter a store name."
+		}
+	])
 
 	const channel = supabase
 		.channel('table_db_changes')
@@ -42,16 +50,16 @@
 				}
 			});
  		});
-
-
-		console.log(shoppingList.value)
-
 	}
 
 	async function addItem() {
-		const { error } = await supabase.from("shoppinglist").insert({name: newItem.value, store_name: storeSelection.value})
-		newItem.value = ""
-		newStore.value = ""
+		const { valid } = await form.value.validate()
+		if(valid){
+			const { error } = await supabase.from("shoppinglist").insert({name: newItem.value, store_name: storeSelection.value})
+			newItem.value = ""
+			newStore.value = ""
+		}
+
 	}
 
 	async function deleteItem(itemId) {
@@ -87,11 +95,13 @@
 				</v-window>
 			</v-card-text>
 		</v-card>
-		<v-text-field label="Item to add" style="width: 300px;" v-model="newItem"></v-text-field>
-		<v-btn @click="addItem">Add item</v-btn>
+		<v-form @submit.prevent="addItem" ref="form">
+			<v-text-field label="Item to add" style="width: 300px;" v-model="newItem"></v-text-field>
+			<v-btn type="submit">Add item</v-btn>
+			<v-combobox label="Store" style="width: 300px;" v-model="storeSelection" :items="storeNames" :rules="rules"></v-combobox>
+		</v-form>
 		<br>
 		<br>
-		<v-combobox label="Store" style="width: 300px;" v-model="storeSelection" :items="storeNames"></v-combobox>
 	</template>
 
 <style>
