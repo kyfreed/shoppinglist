@@ -98,10 +98,10 @@
 		<v-form @submit.prevent="addItem" ref="form">
 			<v-text-field label="Item to add" style="width: 300px;" v-model="newItem"></v-text-field>
 			<v-btn type="submit">Add item</v-btn>
+			<br>
+			<br>
 			<v-combobox label="Store" style="width: 300px;" v-model="storeSelection" :items="storeNames" :rules="rules"></v-combobox>
 		</v-form>
-		<br>
-		<br>
 	</template>
 
 <style>
